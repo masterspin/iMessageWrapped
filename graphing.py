@@ -1,5 +1,6 @@
 import pandas as pd
-from collections import defaultdict
+from collections import defaultdict, Counter
+
 
 def create_graphs():
     messages =  pd.read_csv('imessages.csv')
@@ -9,7 +10,7 @@ def create_graphs():
     total_messages = messages.shape[0]
 
     # Message Sent/Rec
-    total_sent = pd.DataFrame.sum(messages['is_sent'])
+    total_sent = messages['is_sent'].sum()
     total_recieved = total_messages - total_sent
 
     # Message Sent/Recieved Per Person
@@ -24,6 +25,20 @@ def create_graphs():
 
     for n in numbers.keys():
         print(f"{n} : {numbers[n]}")
+
+    #find most common words
+    words_used = Counter()
+    for i in range(total_messages):
+        row = messages.iloc[i]
+        text = row['text']
+        try:
+            words = text.split()
+            words_used = words_used + Counter(words)
+        except:
+            pass
+    
+    print(words_used)
+
 
     # Prints
     print(f"Total Messages: {total_messages}")
