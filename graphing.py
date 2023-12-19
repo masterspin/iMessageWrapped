@@ -9,7 +9,7 @@ def create_graphs():
     total_messages = messages.shape[0]
 
     # Message Sent/Rec
-    total_sent = pd.DataFrame.sum(messages['is_sent'])
+    total_sent = messages['is_sent'].sum()
     total_recieved = total_messages - total_sent
 
     # Message Sent/Recieved Per Person
