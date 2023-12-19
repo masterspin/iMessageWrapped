@@ -33,13 +33,9 @@ df_messages = pd.merge(merge_level_1, chat_message_joins[['chat_id', 'message_id
 
 df_messages.to_csv('./imessages.csv', index = False, encoding='utf-8')
 
-chats = pd.read_sql_query("select * from chat limit 10", conn)
-print(chats)
-# print(handles)
 chats = pd.read_sql_query("select * from chat", conn)
-print(handles)
+df_combined = pd.merge(df_messages, chats[['chat_id', 'chat_name', 'chat_identifier']], on='chat_id', how='left')
 
 
 
-
-# handles.to_csv('./handles.csv', index = False, encoding='utf-8')
+df_combined.to_csv('./combined.csv', index = False, encoding='utf-8')
