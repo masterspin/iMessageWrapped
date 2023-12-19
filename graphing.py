@@ -3,7 +3,7 @@ from collections import defaultdict, Counter
 
 
 def create_graphs():
-    messages =  pd.read_csv('imessages.csv')
+    messages =  pd.read_csv('imessages.csv',lineterminator='\n')
     # print(messages.head())
 
     # Total Messages
