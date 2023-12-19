@@ -1,6 +1,12 @@
 import pandas as pd
 from collections import defaultdict, Counter
+<<<<<<< HEAD
 from stop_words import get_stop_words
+=======
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+>>>>>>> ca0ac56 (stop word filtering for word count)
 
 
 def create_graphs():
@@ -28,13 +34,15 @@ def create_graphs():
         print(f"{n} : {numbers[n]}")
 
     #find most common words
+    stop_words = set(stopwords.words('english'))
     words_used = Counter()
     for i in range(total_messages):
         row = messages.iloc[i]
         text = row['text']
         try:
             words = text.split()
-            words_used = words_used + Counter(words)
+            filtered = [w for w in words if not w.lower() in stop_words]
+            words_used = words_used + Counter(filtered)
         except:
             pass
         
