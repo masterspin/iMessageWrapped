@@ -1,7 +1,7 @@
 import pandas as pd
 
 def create_graphs():
-    pass
+    pd.read_csv()
 
 
 if __name__ == "__main__":

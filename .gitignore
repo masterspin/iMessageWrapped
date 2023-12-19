@@ -1,3 +1,5 @@
 *.db
 *.csv
+*.png
+*.jpg
 env/*
