@@ -31,7 +31,7 @@ merge_level_1 = pd.merge(messages[['text', 'handle_id', 'date','message_date' ,'
 
 df_messages = pd.merge(merge_level_1, chat_message_joins[['chat_id', 'message_id']], on = 'message_id', how='left')
 
-# df_messages.to_csv('./imessages.csv', index = False, encoding='utf-8')
+df_messages.to_csv('./imessages.csv', index = False, encoding='utf-8')
 
 chats = pd.read_sql_query("select * from chat limit 10", conn)
 print(chats)
