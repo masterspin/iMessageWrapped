@@ -1,5 +1,6 @@
 import pandas as pd
 from collections import defaultdict, Counter
+from stop_words import get_stop_words
 
 
 def create_graphs():
@@ -36,6 +37,13 @@ def create_graphs():
             words_used = words_used + Counter(words)
         except:
             pass
+        
+    #remove stop words
+    stop_words = list(get_stop_words('en'))
+    
+    for word in stop_words:
+        if word in words_used:
+            words_used.pop(word)         
     
     print(words_used)
 
