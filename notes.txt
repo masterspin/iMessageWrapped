@@ -1,0 +1,10 @@
+Ideas for metrics:
+    - Average reponse time / person
+    - Most Frequent Word
+    - Most Frequent Emoji
+    - Total Messages Sent
+    - Total Messages Recieved
+    - Messages Sent/Recieved per person
+    - # of conversation
+    - # of conversation started (per person) 
+    - # of lol/lmaos Recieved

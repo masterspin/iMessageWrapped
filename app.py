@@ -36,4 +36,10 @@ df_messages = pd.merge(merge_level_1, chat_message_joins[['chat_id', 'message_id
 chats = pd.read_sql_query("select * from chat limit 10", conn)
 print(chats)
 # print(handles)
+chats = pd.read_sql_query("select * from chat", conn)
+print(handles)
+
+
+
+
 # handles.to_csv('./handles.csv', index = False, encoding='utf-8')
