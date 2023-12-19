@@ -1,3 +1,7 @@
 *.db
 *.csv
-env/
+*.png
+*.jpg
+env/*
+Pipfile
+Pipfile.lock
