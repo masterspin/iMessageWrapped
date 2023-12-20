@@ -56,6 +56,9 @@ def create_graphs():
     for n in numbers.keys():
         print(f"{n} : {numbers[n]}")
 
+    game_pigeon_words = ["Word Hunt", "Anagrams", "Four in a Row", "8 Ball", "9 Ball", "Darts", "Chess", "Shuffleboard", "Word Bites", "Basketball", "Cup Pong", "Checkers", "Archery", "Miniature Golf", "Dots & Boxes"]
+    game_pigeon_freq = {game: 0 for game in game_pigeon_words}
+
     #find most common words
     stop_words = set(stopwords.words('english'))
     words_used = Counter()
@@ -63,9 +66,12 @@ def create_graphs():
         row = messages.iloc[i]
         text = row['text']
         try:
-            words = re.findall(r'\b\w+\b', text.lower())
-            filtered = [w for w in words if not w.lower() in stop_words]
-            words_used = words_used + Counter(filtered)
+            if(text not in game_pigeon_words):
+                words = re.findall(r'\b\w+\b', text.lower())
+                filtered = [w for w in words if not w.lower() in stop_words]
+                words_used = words_used + Counter(filtered)
+            else:
+                game_pigeon_freq[text]+=1
         except:
             pass
         
@@ -86,25 +92,23 @@ def create_graphs():
         if char in words_used:
             words_used.pop(char)      
 
-    game_pigeon_words = ["word", "hunt", "anagrams"]
-
-    for word in game_pigeon_words:
-        if word in words_used:
-            words_used.pop(word)
+    # for word in game_pigeon_words:
+    #     if word in words_used:
+    #         words_used.pop(word)
 
     print(words_used.most_common(10))
 
 
     #Word Hunt Counter
-    total_word_hunts = 0
-    total_anagrams = 0
-    for i in range(total_messages):
-        row = messages.iloc[i]
-        text = row['text']
-        if(text == "Word Hunt"):
-            total_word_hunts+=1
-        if(text == "Anagrams"):
-            total_anagrams+=1
+    # total_word_hunts = 0
+    # total_anagrams = 0
+    # for i in range(total_messages):
+    #     row = messages.iloc[i]
+    #     text = row['text']
+    #     if(text == "Word Hunt"):
+    #         total_word_hunts+=1
+    #     if(text == "Anagrams"):
+    #         total_anagrams+=1
 
 
     # Prints
@@ -113,8 +117,16 @@ def create_graphs():
     print(f"\nTotal Messages: {total_messages}")
     print(f"Total Sent: {total_sent}")
     print(f"Total Recieved: {total_recieved}")
-    print(f"Total Word Hunts: {total_word_hunts}\n")
-    print(f"Total Anagrams: {total_anagrams}\n")
+    # print(f"Total Word Hunts: {total_word_hunts}\n")
+    # print(f"Total Anagrams: {total_anagrams}\n")
+
+    print("")
+
+    sorted_game_pigeon_freq = {k: v for k, v in sorted(game_pigeon_freq.items(), key=lambda item: item[1], reverse=True) if v > 0}
+    print(sorted_game_pigeon_freq)
+    for game, frequency in sorted_game_pigeon_freq.items():
+        print(f"You've played {frequency} games of {game}")
+
     for i in range(len(top_3_sentDM_with_freq)):
         print(f"{medals[i]} You sent {top_3_sentDM_with_freq[i][1]} messages to", top_3_sentDM_with_freq[i][0])
     
