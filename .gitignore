@@ -3,5 +3,7 @@
 *.png
 *.jpg
 env/*
+*.abcddb
 Pipfile
 Pipfile.lock
+
