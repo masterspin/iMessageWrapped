@@ -10,13 +10,12 @@ def get_first_name_from_phone(phone_number, address_book):
     address_book_list = json.loads(address_book)
     # print(address_book_list)
 
-    # Remove non-numeric characters from the phone number
     # phone_number = "".join([c for c in phone_number if c.isnumeric()])
     # print(phone_number)
 
-    # Check if the phone number is in the address book
     for contact in address_book_list:
-        if "NUMBERCLEAN" in contact and contact["FULLNUMBER"] == phone_number:
+        if "NUMBERCLEAN" in contact and contact["NUMBERCLEAN"] == phone_number:
+            print(phone_number)
             return contact.get("FIRSTNAME", "")
 
     return None
@@ -207,21 +206,28 @@ def combine_data(recent_messages, addressBookData):
                 contact_number = contact["NUMBERCLEAN"]
             #if the phone number from the message matches the phone number from the contact add the names to the message
             if phone_number == contact_number:
-                message["first_name"] = contact["FIRSTNAME"]
-                message["last_name"] = contact["LASTNAME"]
+                first_name = contact["FIRSTNAME"]
+                last_name = contact["LASTNAME"]
+
+                if last_name:
+                    full_name = f"{first_name} {last_name}"
+                else:
+                    full_name = first_name
+                message["first_name"] = first_name
+                message["last_name"] = last_name
+                message["full_name"] = full_name
     return recent_messages
 
 
-# ask the user for the location of the database
+#location of the database
 db_location = "./chat.db"
+
+#location of the addressbook
 address_book_location = "./AddressBook-v22.abcddb"
-# ask the user for the number of messages to read
 addressBookData = get_address_book(address_book_location)
-# Remove the 2 lines below after testing -- they are for testing only
+
 recent_messages = read_messages(db_location, addressBookData)
 combined_data = combine_data(recent_messages, addressBookData)
 filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
 
-# print_messages(output)
-# print_messages(filtered_data)
 save_messages_as_csv(filtered_data, "./output.csv")
