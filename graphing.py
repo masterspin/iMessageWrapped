@@ -1,5 +1,13 @@
 import pandas as pd
-from collections import defaultdict
+from collections import defaultdict, Counter
+<<<<<<< HEAD
+from stop_words import get_stop_words
+=======
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+>>>>>>> ca0ac56 (stop word filtering for word count)
+
 
 def create_graphs():
     messages =  pd.read_csv('imessages.csv',lineterminator='\n')
@@ -24,6 +32,29 @@ def create_graphs():
 
     for n in numbers.keys():
         print(f"{n} : {numbers[n]}")
+
+    #find most common words
+    stop_words = set(stopwords.words('english'))
+    words_used = Counter()
+    for i in range(total_messages):
+        row = messages.iloc[i]
+        text = row['text']
+        try:
+            words = text.split()
+            filtered = [w for w in words if not w.lower() in stop_words]
+            words_used = words_used + Counter(filtered)
+        except:
+            pass
+        
+    #remove stop words
+    stop_words = list(get_stop_words('en'))
+    
+    for word in stop_words:
+        if word in words_used:
+            words_used.pop(word)         
+    
+    print(words_used)
+
 
     # Prints
     print(f"Total Messages: {total_messages}")
