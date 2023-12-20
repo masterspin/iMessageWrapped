@@ -153,7 +153,6 @@ def save_messages_as_csv(messages, output_file):
     df['month'] = df['date'].dt.month
     df['timestamp'] = df['date'].astype(int) / 10**9  # Convert to Unix timestamp
     
-    # Save the DataFrame to a CSV file
     df.to_csv(output_file, index=False)
 
 
