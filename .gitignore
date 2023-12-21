@@ -6,4 +6,4 @@ env/*
 *.abcddb
 Pipfile
 Pipfile.lock
-
+env/

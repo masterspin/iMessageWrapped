@@ -15,7 +15,7 @@ def get_first_name_from_phone(phone_number, address_book):
 
     for contact in address_book_list:
         if "NUMBERCLEAN" in contact and contact["NUMBERCLEAN"] == phone_number:
-            print(phone_number)
+            # print(phone_number)
             return contact.get("FIRSTNAME", "")
 
     return None
@@ -217,6 +217,26 @@ def combine_data(recent_messages, addressBookData):
                 message["full_name"] = full_name
     return recent_messages
 
+
+#file location preprocessing
+def preprocessing(user):
+    source_address = f"/Users/{user}/Library/Application Support/AddressBook/AddressBook-v22.abcddb"
+
+    command_address = ["cp", source_address, "./"]
+    try:
+        subprocess.run(command_address, check=True)
+        print("AddressBook database copied successfully!")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+
+    source_chats = f"/Users/{user}/Library/Messages/chat.db"
+
+    command_chats = ["cp", source_chats, "./"]
+    try:
+        subprocess.run(command_chats, check=True)
+        print("Chats database copied successfully!")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
 
 #location of the database
 db_location = "./chat.db"
