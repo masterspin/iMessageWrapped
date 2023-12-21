@@ -17,7 +17,7 @@ import nltk
 from nltk.corpus import stopwords
 nltk.download('stopwords')
 
-def create_graphs(messages, progressText, loading):
+def create_graphs(messages, progressText, loading, label):
     # messages =  pd.read_csv('output.csv',lineterminator='\n')
     # print(messages.head())
 
@@ -127,6 +127,10 @@ def create_graphs(messages, progressText, loading):
     loading.set(1)
     progressText.configure(text="Completed Analysis")
 
+    label.place_forget()
+    loading.place_forget()
+    progressText.place_forget()
+
     print(words_used.most_common(10))
 
 
@@ -172,6 +176,8 @@ def create_graphs(messages, progressText, loading):
     print("")
     for i in range(len(gc_sent_max_list)):
         print(f"{medals[i]} #{i+1} group chat you were most active in:", gc_sent_max_list[i][0])
+    
+
 
 
 def get_first_name_from_phone(phone_number, address_book):
@@ -432,7 +438,7 @@ def get_users():
     return folder_list
 
 
-def button_click_part_2(progressText,loading):
+def button_click_part_2(progressText,loading, label):
     try:
         selected_user = combobox.get()
         preprocessing(selected_user)
@@ -456,7 +462,7 @@ def button_click_part_2(progressText,loading):
     combined_data = combine_data(recent_messages, addressBookData)
     filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
     progressText.configure(text="Creating Graphs")
-    create_graphs(pd.DataFrame(filtered_data), progressText, loading)
+    create_graphs(pd.DataFrame(filtered_data), progressText, loading, label)
 
     # print(addressBookData)
 
@@ -502,7 +508,7 @@ def button_click():
     loading.set(0)
     loading.step()
 
-    t = threading.Thread(target=button_click_part_2, args=(progressText,loading))
+    t = threading.Thread(target=button_click_part_2, args=(progressText,loading, label))
     t.start()
 
 #window appearance
