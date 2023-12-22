@@ -8,6 +8,7 @@ import json
 import pandas as pd
 import threading
 import PIL.Image, PIL.ImageTk
+import time
 import tkinter as tk
 import string
 import re
@@ -15,13 +16,19 @@ from collections import defaultdict, Counter
 from stop_words import get_stop_words
 import nltk
 from nltk.corpus import stopwords
+import seaborn as sns
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 nltk.download('stopwords')
+
+
 
 def create_graphs(messages, progressText, loading, label):
     # messages =  pd.read_csv('output.csv',lineterminator='\n')
     # print(messages.head())
 
     loading.set(0.9)
+    app.update()
 
     # Total Messages
     total_messages = messages.shape[0]
@@ -37,6 +44,7 @@ def create_graphs(messages, progressText, loading, label):
     sentDM_frequency = sentDM_df['full_name'].value_counts()
     top_3_sentDM_with_freq = [(name, freq) for name, freq in sentDM_frequency.head(3).items()]
     loading.set(0.91)
+    app.update()
 
     progressText.configure(text="Grabbing data about the person who you've received the most texts from")
     #Person who you've received the most texts from (direct messaging only)
@@ -44,6 +52,7 @@ def create_graphs(messages, progressText, loading, label):
     receivedDM_frequency = receivedDM_df['full_name'].value_counts()
     top_3_receivedDM_with_freq = [(name, freq) for name, freq in receivedDM_frequency.head(3).items()]
     loading.set(0.92)
+    app.update()
 
     progressText.configure(text="Grabbing data about your most active group chats")
     #Most active group chats (includes sent and received messages)
@@ -52,6 +61,7 @@ def create_graphs(messages, progressText, loading, label):
     top_3_groupChats_with_freq = groupChats_frequency.head(3)
     gc_max_list = list(zip(top_3_groupChats_with_freq.index, top_3_groupChats_with_freq))
     loading.set(0.93)
+    app.update()
 
     progressText.configure(text="Grabbing data about which group chats where you were most active in")
     #group chats where you were most active in (only includes sent messages)
@@ -60,6 +70,7 @@ def create_graphs(messages, progressText, loading, label):
     top_3_groupChats_sent_with_freq = groupChats_frequency_sent.head(3)
     gc_sent_max_list = list(zip(top_3_groupChats_sent_with_freq.index, top_3_groupChats_sent_with_freq))
     loading.set(0.94)
+    app.update()
 
     # Message Sent/Recieved Per Person (includes group chats)
     def default_list():
@@ -68,6 +79,7 @@ def create_graphs(messages, progressText, loading, label):
     numbers = defaultdict(default_list)
 
     progressText.configure(text="Grabbing data about how many texts you've sent and received with each friend")
+    app.update()
     for i in range(total_messages):
         row = messages.iloc[i]
         if(pd.isna(row["full_name"])):
@@ -79,11 +91,13 @@ def create_graphs(messages, progressText, loading, label):
         print(f"{n} : {numbers[n]}")
 
     loading.set(0.95)
+    app.update()
 
     game_pigeon_words = ["Word Hunt", "Anagrams", "Four in a Row", "8 Ball", "9 Ball", "Darts", "Chess", "Shuffleboard", "Word Bites", "Basketball", "Cup Pong", "Checkers", "Archery", "Miniature Golf", "Dots & Boxes"]
     game_pigeon_freq = {game: 0 for game in game_pigeon_words}
 
     progressText.configure(text="Grabbing data about your most commonly used words")
+    app.update()
     #find most common words
     stop_words = set(stopwords.words('english'))
     words_used = Counter()
@@ -104,6 +118,7 @@ def create_graphs(messages, progressText, loading, label):
     stop_words = list(get_stop_words('en'))
     
     progressText.configure(text="Removing common phrases and words from the list")
+    app.update()
     for word in stop_words:
         if word in words_used:
             words_used.pop(word)        
@@ -126,6 +141,7 @@ def create_graphs(messages, progressText, loading, label):
     loading.configure(determinate_speed=2)
     loading.set(1)
     progressText.configure(text="Completed Analysis")
+    app.update()
 
     label.place_forget()
     loading.place_forget()
@@ -158,6 +174,10 @@ def create_graphs(messages, progressText, loading, label):
     print("")
 
     sorted_game_pigeon_freq = {k: v for k, v in sorted(game_pigeon_freq.items(), key=lambda item: item[1], reverse=True) if v > 0}
+    global gpDictionary
+    gpDictionary = sorted_game_pigeon_freq
+
+
     print(sorted_game_pigeon_freq)
     for game, frequency in sorted_game_pigeon_freq.items():
         print(f"You've played {frequency} games of {game}")
@@ -176,6 +196,9 @@ def create_graphs(messages, progressText, loading, label):
     print("")
     for i in range(len(gc_sent_max_list)):
         print(f"{medals[i]} #{i+1} group chat you were most active in:", gc_sent_max_list[i][0])
+
+    global closeThread
+    closeThread = True
     
 
 
@@ -257,10 +280,10 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f" ORDER BY message.date DESC"
+    query += f" ORDER BY message.date DESC LIMIT 10000"
     results = cursor.execute(query).fetchall()
 
-    loading.configure(determinate_speed=40/len(results))
+    loading.configure(determinate_speed=42/len(results))
     this_year = 0
     
     messages = []
@@ -268,6 +291,7 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
     loop_count = 0
 
     for result in results:
+        app.update()
         loading.step()
         rowid, date, text, attributed_body, handle_id, is_from_me, cache_roomname = result
 
@@ -301,7 +325,7 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
             new_date = int((date+unix_timestamp)/1000000000)
             date = datetime.datetime.fromtimestamp(new_date).strftime("%Y-%m-%d %H:%M:%S")
             if date[:4] != '2023':  # Check the year in the formatted date
-                loading.configure(determinate_speed= 40 - (40/len(result) * this_year))
+                loading.configure(determinate_speed= 42 - (42/len(result) * this_year))
                 loading.step()
                 break
         
@@ -309,8 +333,6 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
 
         loop_count +=1
         progressText.configure(text=f"Reading message #{loop_count}")
-
-        print(date)
 
         mapping = get_chat_mapping(db_location, addressBookData)  # Get chat mapping from database location
 
@@ -439,32 +461,7 @@ def get_users():
 
 
 def button_click_part_2(progressText,loading, label):
-    try:
-        selected_user = combobox.get()
-        preprocessing(selected_user)
-    except Exception as e:
-        print("Error in preprocessing:", e)
-
-    loading.step()
-    progressText.configure(text="Copying Contact Information and Message History")
-
-    #location of the database
-    db_location = "./chat.db"
-
-    #location of the addressbook
-    address_book_location = "./AddressBook-v22.abcddb"
-
-    addressBookData = get_address_book(address_book_location)
-    loading.step()
-    progressText.configure(text="Assigned names to phone numbers")
-    recent_messages = read_messages(db_location, addressBookData, progressText, loading)
-    progressText.configure(text="Read Messages")
-    combined_data = combine_data(recent_messages, addressBookData)
-    filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
-    progressText.configure(text="Creating Graphs")
-    create_graphs(pd.DataFrame(filtered_data), progressText, loading, label)
-
-    # print(addressBookData)
+    pass
 
 def loading_text(label, count=0):
     ellipses = ["", ".", "..", "..."]
@@ -508,8 +505,73 @@ def button_click():
     loading.set(0)
     loading.step()
 
-    t = threading.Thread(target=button_click_part_2, args=(progressText,loading, label))
-    t.start()
+    app.update()
+
+    # t = threading.Thread(target=button_click_part_2, args=(progressText,loading, label))
+    # t.start()
+
+    try:
+        selected_user = combobox.get()
+        preprocessing(selected_user)
+    except Exception as e:
+        print("Error in preprocessing:", e)
+
+    loading.step()
+    progressText.configure(text="Copying Contact Information and Message History")
+    app.update()
+
+    #location of the database
+    db_location = "./chat.db"
+
+    #location of the addressbook
+    address_book_location = "./AddressBook-v22.abcddb"
+
+    addressBookData = get_address_book(address_book_location)
+    app.update()
+    loading.step()
+    progressText.configure(text="Assigned names to phone numbers")
+    app.update()
+    recent_messages = read_messages(db_location, addressBookData, progressText, loading)
+    app.update()
+    progressText.configure(text="Read Messages")
+    app.update()
+    combined_data = combine_data(recent_messages, addressBookData)
+    app.update()
+    filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
+    app.update()
+    progressText.configure(text="Creating Graphs")
+    app.update()
+    create_graphs(pd.DataFrame(filtered_data), progressText, loading, label)
+    app.update()
+
+
+    # print(addressBookData)
+
+    # while t.is_alive():  # Check if the thread is still alive
+    #     print("Main program waiting for thread to complete...")
+    #     time.sleep(1)  # Poll every 1 second
+
+    # global gpDictionary
+
+    # print(gpDictionary)
+    # game_names = list(gpDictionary.keys())
+    # game_freq = list(gpDictionary.values())
+
+    # plt.figure(figsize=(8, 6))
+    # plt.barh(game_names, game_freq, color='skyblue')
+    # plt.xlabel('Frequency')
+    # plt.title('Game Pigeon Game Frequencies')
+    # plt.gca().invert_yaxis()  # Invert y-axis to display highest frequency at the top
+
+    # # Embed Matplotlib plot into tkinter window
+    # canvas = FigureCanvasTkAgg(plt.gcf(), master=app)
+    # canvas.draw()
+    # canvas.get_tk_widget().pack()
+    
+
+#globals
+gpDictionary={}
+closeThread = False
 
 #window appearance
 app = CTk()
