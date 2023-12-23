@@ -6,9 +6,9 @@ import subprocess
 import os
 import json
 import pandas as pd
-import threading
+import matplotlib
+matplotlib.use("TkAgg")
 import PIL.Image, PIL.ImageTk
-import time
 import tkinter as tk
 import string
 import re
@@ -17,9 +17,11 @@ from stop_words import get_stop_words
 import nltk
 from nltk.corpus import stopwords
 import seaborn as sns
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 nltk.download('stopwords')
+
 
 
 
@@ -134,10 +136,6 @@ def create_graphs(messages, progressText, loading, label):
         if char in words_used:
             words_used.pop(char)      
 
-    # for word in game_pigeon_words:
-    #     if word in words_used:
-    #         words_used.pop(word)
-
     loading.configure(determinate_speed=2)
     loading.set(1)
     progressText.configure(text="Completed Analysis")
@@ -150,55 +148,113 @@ def create_graphs(messages, progressText, loading, label):
     print(words_used.most_common(10))
 
 
-    #Word Hunt Counter
-    # total_word_hunts = 0
-    # total_anagrams = 0
-    # for i in range(total_messages):
-    #     row = messages.iloc[i]
-    #     text = row['text']
-    #     if(text == "Word Hunt"):
-    #         total_word_hunts+=1
-    #     if(text == "Anagrams"):
-    #         total_anagrams+=1
-
-
     # Prints
     medals = ["🥇", "🥈", "🥉"]
+    
+    totalText = f"Total Messages: {total_messages}" + f"\tTotal Sent: {total_sent}" + f"\tTotal Recieved: {total_recieved}"
+    totalLabel = CTkLabel(master=app, text=totalText, text_color="#d8d8d8", font=("Arial", 16))
+    totalLabel.place(relx=0.5, rely=0.05, anchor="center")
 
-    print(f"\nTotal Messages: {total_messages}")
-    print(f"Total Sent: {total_sent}")
-    print(f"Total Recieved: {total_recieved}")
-    # print(f"Total Word Hunts: {total_word_hunts}\n")
-    # print(f"Total Anagrams: {total_anagrams}\n")
 
     print("")
 
     sorted_game_pigeon_freq = {k: v for k, v in sorted(game_pigeon_freq.items(), key=lambda item: item[1], reverse=True) if v > 0}
-    global gpDictionary
-    gpDictionary = sorted_game_pigeon_freq
 
 
     print(sorted_game_pigeon_freq)
     for game, frequency in sorted_game_pigeon_freq.items():
         print(f"You've played {frequency} games of {game}")
 
+    top3SentDMText = "Top people you've sent messages to\n"
     for i in range(len(top_3_sentDM_with_freq)):
-        print(f"{medals[i]} You sent {top_3_sentDM_with_freq[i][1]} messages to", top_3_sentDM_with_freq[i][0])
+        top3SentDMText += f"{medals[i]} {top_3_sentDM_with_freq[i][1]} messages to {top_3_sentDM_with_freq[i][0]}\t"
     
-    print("")
+    top3SentDMLabel = CTkLabel(master=app, text=top3SentDMText, text_color="#d8d8d8", font=("Arial", 16))
+    top3SentDMLabel.place(relx=0.5, rely=0.1, anchor="center")
+    
+    top3ReceivedDMText = "Top people you've received messages from\n"
     for i in range(len(top_3_receivedDM_with_freq)):
-        print(f"{medals[i]} You received {top_3_receivedDM_with_freq[i][1]} messages from", top_3_receivedDM_with_freq[i][0])
+        top3ReceivedDMText += f"{medals[i]} {top_3_receivedDM_with_freq[i][1]} messages from {top_3_receivedDM_with_freq[i][0]}\t"
     
-    print("")
+    top3ReceivedDMLabel = CTkLabel(master=app, text=top3ReceivedDMText, text_color="#d8d8d8", font=("Arial", 16))
+    top3ReceivedDMLabel.place(relx=0.5, rely=0.15, anchor="center")
+    
+    mostActiveGCText = "Most Active Group Chats\n"
     for i in range(len(gc_max_list)):
-        print(f"{medals[i]} #{i+1} most active group chat:", gc_max_list[i][0])
+        mostActiveGCText += f"{medals[i]} #{i+1} {gc_max_list[i][0]}\t"
+    mostAtiveGCLabel = CTkLabel(master=app, text=mostActiveGCText, text_color="#d8d8d8", font=("Arial", 16))
+    mostAtiveGCLabel.place(relx=0.5, rely=0.2, anchor="center")
     
-    print("")
+    mostActiveSentGCText = "Group Chats you were most active in\n"
     for i in range(len(gc_sent_max_list)):
-        print(f"{medals[i]} #{i+1} group chat you were most active in:", gc_sent_max_list[i][0])
+         mostActiveSentGCText+=f"{medals[i]} #{i+1} {gc_sent_max_list[i][0]}\t"
+    mostAtiveGCSentLabel = CTkLabel(master=app, text=mostActiveSentGCText, text_color="#d8d8d8", font=("Arial", 16))
+    mostAtiveGCSentLabel.place(relx=0.5, rely=0.25, anchor="center")
+    
+    #window dimensions
+    window_width = app.winfo_width()
+    window_height = app.winfo_height()
+    relative_width = window_width * 0.1  # Modify this factor as needed
+    relative_height = window_height * 0.1  # Modify this factor as needed
 
-    global closeThread
-    closeThread = True
+    # app.configure(fg_color = "#218aff")
+
+    # graph creation
+    if(len(sorted_game_pigeon_freq) > 0):
+        gamePigeonKeys = list(sorted_game_pigeon_freq.keys())
+        gamePigeonValues = list(sorted_game_pigeon_freq.values())
+        frame = tk.Frame(app)
+        frame.pack(side=tk.BOTTOM, expand=True)
+        sns.set(style="dark")
+
+        # Create the plot with 'hue' parameter instead of 'palette'
+        ax = sns.barplot(x=gamePigeonValues, y=gamePigeonKeys, orient='h', palette='Pastel1', hue=gamePigeonKeys, dodge=False, legend=False)
+        ax.set_title('Game Pigeon (Rounds Played)', color='#218aff')  # Set title color
+        ax.patch.set_facecolor("#242424")
+
+        # Customize plot aesthetics
+        fig = plt.gcf()
+        fig.patch.set_facecolor("#242424")  # Set figure background to app's background color
+        ax.xaxis.label.set_color('#59DFFF')  # Set x-axis label color
+        ax.yaxis.label.set_color('#59DFFF')   # Set y-axis label color     # Set x-axis label
+
+        # Rotate y-axis labels to make them visible
+        ax.set_yticklabels(gamePigeonKeys, rotation=45, ha='right', color='#218aff')
+
+        custom_font = FontProperties(family='Arial', weight='bold', style='italic', size=10)
+
+        # Display values on top of bars
+        for p in ax.patches:
+            ax.annotate(f'{p.get_width():.0f}', (p.get_x() + p.get_width(), p.get_y() + p.get_height() / 2),
+                        ha='left', va='center', color='#39ff5a', xytext=(5, 0), textcoords='offset points', fontproperties=custom_font)
+        
+        # Set font for x-axis label
+        ax.xaxis.label.set_fontproperties(custom_font)
+
+        # Set font for y-axis label
+        ax.yaxis.label.set_fontproperties(custom_font)
+        ax.title.set_fontproperties(custom_font)
+
+        # Set font for y-axis tick labels
+        for label in ax.get_yticklabels():
+            label.set_fontproperties(custom_font)
+        
+        for label in ax.get_xticklabels():
+            label.set_color('#39ff5a')
+            label.set_fontproperties(custom_font)
+
+        canvas = FigureCanvasTkAgg(fig, master=frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(expand=True)
+
+        graph_frame = tk.Frame(app)
+        graph_frame.pack(side=tk.TOP, expand=True)
+
+        # toolbar = NavigationToolbar2Tk(canvas, graph_frame)
+        # toolbar.configure(background='#242424')  # Set background and foreground colors
+        # toolbar.update()
+        # toolbar.pack()
+        
     
 
 
@@ -208,7 +264,6 @@ def get_first_name_from_phone(phone_number, address_book):
     address_book_list = json.loads(address_book)
     # print(address_book_list)
 
-    # phone_number = "".join([c for c in phone_number if c.isnumeric()])
     # print(phone_number)
 
     for contact in address_book_list:
@@ -280,7 +335,7 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f" ORDER BY message.date DESC LIMIT 10000"
+    query += f" ORDER BY message.date DESC"
     results = cursor.execute(query).fetchall()
 
     loading.configure(determinate_speed=42/len(results))
@@ -289,11 +344,13 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
     messages = []
 
     loop_count = 0
+    app.update()
 
     for result in results:
-        app.update()
         loading.step()
         rowid, date, text, attributed_body, handle_id, is_from_me, cache_roomname = result
+
+        unix_timestamp=None
 
         # Use self_number or handle_id as phone_number depending on whether it's a self-message or not
         phone_number = self_number if handle_id is None else handle_id
@@ -342,8 +399,9 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
             mapped_name = None
             
         messages.append(
-            {"rowid": rowid, "date": date, "text": body, "phone_number": phone_number, "is_from_me": is_from_me,
-             "cache_roomname": cache_roomname, 'group_chat_name' : mapped_name})
+            {"date": date, "text": body, "phone_number": phone_number, "is_from_me": is_from_me,
+             "cache_roomname": cache_roomname, 'group_chat_name' : mapped_name, 'timestamp':unix_timestamp})
+        app.update()
 
     conn.close()
     return messages
@@ -379,22 +437,22 @@ def get_address_book(address_book_location):
     return new_json_output
 
 
-def save_messages_as_csv(messages, output_file):
-    # Convert the list of dictionaries to a DataFrame
-    df = pd.DataFrame(messages)
+# def save_messages_as_csv(messages, output_file):
+#     # Convert the list of dictionaries to a DataFrame
+#     df = pd.DataFrame(messages)
     
-    # Drop the 'rowid' column
-    df.drop(columns=['rowid'], inplace=True, errors='ignore')
+#     # Drop the 'rowid' column
+#     df.drop(columns=['rowid'], inplace=True, errors='ignore')
 
-    # Convert 'date' column to datetime format
-    df['date'] = pd.to_datetime(df['date'])
+#     # Convert 'date' column to datetime format
+#     df['date'] = pd.to_datetime(df['date'])
     
-    # Extract year, month, timestamp from 'date'
-    df['year'] = df['date'].dt.year
-    df['month'] = df['date'].dt.month
-    df['timestamp'] = df['date'].astype(int) / 10**9  # Convert to Unix timestamp
+#     # Extract year, month, timestamp from 'date'
+#     df['year'] = df['date'].dt.year
+#     df['month'] = df['date'].dt.month
+#     df['timestamp'] = df['date'].astype(int) / 10**9  # Convert to Unix timestamp
     
-    df.to_csv(output_file, index=False)
+#     df.to_csv(output_file, index=False)
 
 #combine recent messages and address book data
 def combine_data(recent_messages, addressBookData):
@@ -429,7 +487,10 @@ def run_with_password_prompt(command):
     applescript = f'''
     do shell script "{command}" with administrator privileges
     '''
-    subprocess.run(['osascript', '-e', applescript])
+
+    applescript_bytes = applescript.encode('utf-8')
+
+    subprocess.run(['osascript', '-e', applescript_bytes])
 
 def preprocessing(user):
     source_address = f"/Users/{user}/Library/Application Support/AddressBook/AddressBook-v22.abcddb"
@@ -457,6 +518,8 @@ def get_users():
     folder_list=[]
     if os.path.exists(directory_path) and os.path.isdir(directory_path):
         folder_list = [folder for folder in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, folder))]
+    if("Shared" in folder_list):
+        folder_list.remove("Shared")
     return folder_list
 
 
@@ -547,13 +610,7 @@ def button_click():
 
     # print(addressBookData)
 
-    # while t.is_alive():  # Check if the thread is still alive
-    #     print("Main program waiting for thread to complete...")
-    #     time.sleep(1)  # Poll every 1 second
 
-    # global gpDictionary
-
-    # print(gpDictionary)
     # game_names = list(gpDictionary.keys())
     # game_freq = list(gpDictionary.values())
 
@@ -570,8 +627,6 @@ def button_click():
     
 
 #globals
-gpDictionary={}
-closeThread = False
 
 #window appearance
 app = CTk()
@@ -584,20 +639,11 @@ app.title("iMessage Wrapped")
 #User Selection
 users = get_users()
 
-# variable = StringVar(app)
-# variable.set(users[0])  # Set the default option
-
-# # Dropdown menu for selecting options
-# dropdown = CTkOptionMenu(app, variable, *users)
-# dropdown.pack()
-
-# # Button to perform action based on selected option
-
 loading = CTkProgressBar(master=app, width=500, determinate_speed=1)
 loading.pack_forget()  # Initially hiding the progress bar
 
-label = CTkLabel(master=app, text="Choose a user to wrap!", text_color="#39ff5a", font=("Onyx", 24, "bold"))
-label.place(relx=0.5, rely=0.15, anchor="center")
+label = CTkLabel(master=app, text="Select a user to wrap!", text_color="#39ff5a", font=("Onyx", 24, "bold"))
+label.place(relx=0.5, rely=0.18, anchor="center")
 
 combobox = CTkComboBox(master=app, values=users, dropdown_fg_color="#218aff")
 combobox.place(relx=0.5, rely=0.22, anchor="center")
