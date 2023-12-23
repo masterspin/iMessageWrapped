@@ -16,3 +16,4 @@ tornado
 tqdm
 tzdata
 xyzservices
+seaborn
