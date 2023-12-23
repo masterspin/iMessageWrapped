@@ -208,7 +208,7 @@ def create_graphs(messages, progressText, loading, label):
         sns.set(style="dark")
 
         # Create the plot with 'hue' parameter instead of 'palette'
-        ax = sns.barplot(x=gamePigeonValues, y=gamePigeonKeys, orient='h', palette='Pastel1', hue=gamePigeonKeys, dodge=False, legend=False)
+        ax = sns.barplot(x=gamePigeonValues, y=gamePigeonKeys, orient='h', palette='Set1', hue=gamePigeonKeys, dodge=False, legend=False)
         ax.set_title('Game Pigeon (Rounds Played)', color='#218aff')  # Set title color
         ax.patch.set_facecolor("#242424")
 
