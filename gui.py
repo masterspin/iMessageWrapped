@@ -7,8 +7,10 @@ import os
 import json
 import pandas as pd
 import matplotlib
+# import getpass
 matplotlib.use("TkAgg")
 import PIL.Image, PIL.ImageTk
+# from tkinter import simpledialog
 import tkinter as tk
 import string
 import re
@@ -335,10 +337,10 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f" ORDER BY message.date DESC"
+    query += f" WHERE message.date >= 694224000000000000 ORDER BY message.date DESC LIMIT 3000"
     results = cursor.execute(query).fetchall()
 
-    loading.configure(determinate_speed=42/len(results))
+    loading.configure(determinate_speed=42.5/len(results))
     this_year = 0
     
     messages = []
@@ -381,16 +383,13 @@ def read_messages(db_location, addressBookData, progressText, loading, self_numb
             unix_timestamp = int(mod_date.timestamp())*1000000000
             new_date = int((date+unix_timestamp)/1000000000)
             date = datetime.datetime.fromtimestamp(new_date).strftime("%Y-%m-%d %H:%M:%S")
-            if date[:4] != '2023':  # Check the year in the formatted date
-                loading.configure(determinate_speed= 42 - (42/len(result) * this_year))
-                loading.step()
-                break
         
         this_year+=1
 
         loop_count +=1
         progressText.configure(text=f"Reading message #{loop_count}")
 
+        print("here:",loop_count)
         mapping = get_chat_mapping(db_location, addressBookData)  # Get chat mapping from database location
 
         try:
@@ -436,24 +435,6 @@ def get_address_book(address_book_location):
     new_json_output = json.dumps(json_list)
     return new_json_output
 
-
-# def save_messages_as_csv(messages, output_file):
-#     # Convert the list of dictionaries to a DataFrame
-#     df = pd.DataFrame(messages)
-    
-#     # Drop the 'rowid' column
-#     df.drop(columns=['rowid'], inplace=True, errors='ignore')
-
-#     # Convert 'date' column to datetime format
-#     df['date'] = pd.to_datetime(df['date'])
-    
-#     # Extract year, month, timestamp from 'date'
-#     df['year'] = df['date'].dt.year
-#     df['month'] = df['date'].dt.month
-#     df['timestamp'] = df['date'].astype(int) / 10**9  # Convert to Unix timestamp
-    
-#     df.to_csv(output_file, index=False)
-
 #combine recent messages and address book data
 def combine_data(recent_messages, addressBookData):
     #convert addressBookData to a list of dictionaries
@@ -482,34 +463,46 @@ def combine_data(recent_messages, addressBookData):
     return recent_messages
 
 
-#file location preprocessing
-def run_with_password_prompt(command):
-    applescript = f'''
-    do shell script "{command}" with administrator privileges
-    '''
-
-    applescript_bytes = applescript.encode('utf-8')
-
-    subprocess.run(['osascript', '-e', applescript_bytes])
-
 def preprocessing(user):
+    # password = simpledialog.askstring("Password", "Enter your password:", show='*')
+
+    script = 'do shell script "echo 1" with administrator privileges'
+    dialog_text = 'iMessage Wrapped needs access to your message history and contact information\nPlease enter your password to copy the file'
+    subprocess.run(['osascript', '-e', 'do shell script "echo 1" with administrator privileges'])
     source_address = f"/Users/{user}/Library/Application Support/AddressBook/AddressBook-v22.abcddb"
     destination_address = "./"
 
-    try:
-        run_with_password_prompt(f'cp "{source_address}" "{destination_address}"')
-        print("AddressBook database copied successfully!")
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+    command_address = ['sudo', '-S', 'cp', source_address, destination_address]
+    completed_process_address = subprocess.run(command_address, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print("here")
+
+    if completed_process_address.returncode == 0:
+        print("File copied successfully.")
+    else:
+        print("Error occurred:", completed_process_address.stderr)
+
+    # try:
+    #     subprocess.run(['sudo', 'cp', {source_address}, {destination_address}])
+    #     print("AddressBook database copied successfully!")
+    # except subprocess.CalledProcessError as e:
+    #     print(f"Error: {e}")
 
     source_chats = f"/Users/{user}/Library/Messages/chat.db"
     destination_chats = "./"
 
-    try:
-        run_with_password_prompt(f'cp "{source_chats}" "{destination_chats}"')
-        print("Chats database copied successfully!")
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+    command_chats = ['sudo', '-S', 'cp', source_chats, destination_chats]
+    completed_process_chats = subprocess.run(command_chats, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if completed_process_chats.returncode == 0:
+        print("File copied successfully.")
+    else:
+        print("Error occurred:", completed_process_chats.stderr)
+
+    # try:
+    #     subprocess.run(['sudo', 'cp', {source_chats}, {destination_chats}])
+    #     print("Chats database copied successfully!")
+    # except subprocess.CalledProcessError as e:
+    #     print(f"Error: {e}")
 
 
 #function to get list of users in macOS
@@ -539,24 +532,6 @@ def button_click():
     combobox.place_forget()
     btn.place_forget()
 
-    # image_path = "static/giphy.gif"  # Replace with your GIF image path
-    # gif_image = PIL.Image.open(image_path)
-    # gif_frames = [PIL.ImageTk.PhotoImage(frame) for frame in PIL.ImageSequence.Iterator(gif_image)]
-
-    # # Display the GIF using Label
-    # gif_label = CTkLabel(app)
-    # gif_label.pack()
-
-    # # Function to animate the GIF
-    # def animate(count=0):
-    #     gif_label.configure(image=gif_frames[count])
-    #     count += 1
-    #     if count == len(gif_frames):
-    #         count = 0
-    #     app.after(50, lambda: animate(count))
-
-    # animate()
-
     progressText = CTkLabel(master=app, text="Wrapping up your texts", text_color="#d8d8d8")
     progressText.place(relx=0.5, rely=0.55, anchor="center")
 
@@ -569,9 +544,6 @@ def button_click():
     loading.step()
 
     app.update()
-
-    # t = threading.Thread(target=button_click_part_2, args=(progressText,loading, label))
-    # t.start()
 
     try:
         selected_user = combobox.get()
@@ -590,6 +562,7 @@ def button_click():
     address_book_location = "./AddressBook-v22.abcddb"
 
     addressBookData = get_address_book(address_book_location)
+    print(addressBookData)
     app.update()
     loading.step()
     progressText.configure(text="Assigned names to phone numbers")
@@ -607,26 +580,6 @@ def button_click():
     create_graphs(pd.DataFrame(filtered_data), progressText, loading, label)
     app.update()
 
-
-    # print(addressBookData)
-
-
-    # game_names = list(gpDictionary.keys())
-    # game_freq = list(gpDictionary.values())
-
-    # plt.figure(figsize=(8, 6))
-    # plt.barh(game_names, game_freq, color='skyblue')
-    # plt.xlabel('Frequency')
-    # plt.title('Game Pigeon Game Frequencies')
-    # plt.gca().invert_yaxis()  # Invert y-axis to display highest frequency at the top
-
-    # # Embed Matplotlib plot into tkinter window
-    # canvas = FigureCanvasTkAgg(plt.gcf(), master=app)
-    # canvas.draw()
-    # canvas.get_tk_widget().pack()
-    
-
-#globals
 
 #window appearance
 app = CTk()

@@ -3,6 +3,14 @@ import { useRouter } from 'next/navigation';
 import Plotly from "plotly.js"
 import createPlotlyComponent from "react-plotly.js/factory";
 import dynamic from 'next/dynamic';
+import { css } from '@emotion/react';
+import { SyncLoader } from 'react-spinners';
+
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`;
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
@@ -13,16 +21,16 @@ const Loading: React.FC = () => {
   const [randomColors, setRandomColors] = useState<string[]>([]);
   const [responseData, setResponseData] = useState<any>({}); // State to hold response data
   const [dataLoaded, setDataLoaded] = useState(false); // State to track data loading
-  const loadingTexts = ['Wrapping up your texts','Copying Contact Information and Message History', 'Assigning names to phone numbers', 'Reading Messages', 'Creating Graphs', 'Grabbing Game Pigeon Data','Grabbing data about your most commonly used words','Removing common phrases and words from the list','Grabbing data about how many texts you\'ve sent and received with each friend','Grabbing data about which group chats where you were most active in','Grabbing data about your most active group chats','Grabbing data about the person who you\'ve received the most texts from','Grabbing data about the person who you\'ve sent the most texts to', 'Grabbing most used emojis']; // Add more texts as needed
+  const loadingTexts = ['Wrapping up your texts','Copying Contact Information and Message History', 'Assigning names to phone numbers', 'Reading Messages', 'Creating Graphs', 'Grabbing Game Pigeon Data','Grabbing data about your most commonly used words','Removing common phrases and words from the list','Grabbing data about how many texts you\'ve sent and received with each friend','Grabbing data about which group chats where you were most active in','Grabbing data about your most active group chats','Grabbing data about the person who you\'ve received the most texts from','Grabbing data about the person who you\'ve sent the most texts to', 'Grabbing most used emojis', 'Graphing average response time between users']; // Add more texts as needed
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingTextIndex((prevIndex) => (prevIndex + 1) % loadingTexts.length);
-    }, 5000); // Change text every 5 seconds (adjust speed as needed)
+    }, 10000); // Change text every 5 seconds (adjust speed as needed)
 
     const analyze = async () => {
       try {
         const response = await fetch('http://127.0.0.1:5000/analyze');
-        if (response.ok) {
+        if (response.status >= 200 && response.status < 300) {
           console.log('API call successful');
           clearInterval(interval);
           const data = await response.json();
@@ -32,6 +40,7 @@ const Loading: React.FC = () => {
           setDataLoaded(true); // Set dataLoaded to true after receiving data
         } else {
           console.error('API call failed');
+          router.push('/error');
         }
       } catch (error) {
         console.error('Error occurred:', error);
@@ -69,8 +78,9 @@ const Loading: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-200">
       {!dataLoaded ? (
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">{loadingTexts[loadingTextIndex]}...</h1>
-          <p className="text-gray-600">Please wait while we process your request.</p>
+          <h1 className="text-4xl font-bold mb-4" style={{color:"#008bff"}}>{loadingTexts[loadingTextIndex]} <span><SyncLoader color={'#008bff'} loading={true} size={10} /></span></h1>
+          <p className="text-gray-800">Please wait while we process your request.</p>
+          <p className="text-gray-400">This may take a few minutes.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
@@ -179,7 +189,7 @@ const Loading: React.FC = () => {
           {/* Plot Card */}
           {dataLoaded && responseData.numbersSent && (
           <div className="col-span-3 md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-2">Messages Sent</h2>
+            <h2 className="text-xl font-semibold mb-2">Messages Sent (Group Chats Included)</h2>
             <div className="plot-container">
               <Plot
                 data={[
@@ -208,7 +218,7 @@ const Loading: React.FC = () => {
         )}
         {dataLoaded && responseData.numbersReceived && (
           <div className="col-span-3 md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-2">Messages Received</h2>
+            <h2 className="text-xl font-semibold mb-2">Messages Received (Group Chats Included)</h2>
             <div className="plot-container">
               <Plot
                 data={[
@@ -237,7 +247,7 @@ const Loading: React.FC = () => {
         )}
         {dataLoaded && responseData.averageResponse && (
           <div className="col-span-3 md:col-span-2 lg:col-span-3 bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-2">Average Direct Message Response Time Sent (Per Person)</h2>
+            <h2 className="text-xl font-semibold mb-2">Average Direct Message Response Time</h2>
             <div className="plot-container">
               <Plot
                 data={[

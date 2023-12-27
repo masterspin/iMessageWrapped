@@ -46,6 +46,7 @@ const Landing: React.FC = (LandingProps) => {
           router.push('/loading'); // Redirect to the desired route
         } else {
           console.error('Failed to upload files');
+          router.push('/error');
           // Handle failure, e.g., display an error message to the user
         }
       } catch (error) {

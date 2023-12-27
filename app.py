@@ -1,8 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import sqlite3
 import datetime
+import shutil
 import json
 import pandas as pd
 import plotly.express as px
@@ -315,7 +316,7 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f" ORDER BY message.date DESC"
+    query += f"  WHERE message.date >= 694224000000000000 ORDER BY message.date DESC"
     results = cursor.execute(query).fetchall()
 
     this_year = 0
@@ -359,8 +360,8 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
             new_date = int((date+unix_timestamp)/1000000000)
             unix = int(new_date)
             date = datetime.datetime.fromtimestamp(new_date).strftime("%Y-%m-%d %H:%M:%S")
-            if date[:4] != '2023':  # Check the year in the formatted date
-                break
+            # if date[:4] != '2023':  # Check the year in the formatted date
+            #     break
         
         this_year+=1
 
@@ -445,16 +446,50 @@ def button_click():
 
     #location of the addressbook
     address_book_location = "./uploads/AddressBook-v22.abcddb"
+    addressBookData = None
+    recent_messages = None
+    combined_data = None
+    filtered_data = None
+    try:
+        addressBookData = get_address_book(address_book_location)
+    except Exception as e:
+        return jsonify({'error': f'Error fetching address book: {str(e)}'}), 500
+    
+    try:
+        recent_messages = read_messages(db_location, addressBookData)
+    except Exception as e:
+        return jsonify({'error': f'Error fetching messages: {str(e)}'}), 500
+    
+    try:
+         combined_data = combine_data(recent_messages, addressBookData)
+    except Exception as e:
+        return jsonify({'error': f'Error combining data: {str(e)}'}), 500
+    
+    try:
+        filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
+    except Exception as e:
+        return jsonify({'error': f'Error filtering data: {str(e)}'}), 500
+    print("here")
 
-    addressBookData = get_address_book(address_book_location)
-    recent_messages = read_messages(db_location, addressBookData)
-    combined_data = combine_data(recent_messages, addressBookData)
-    filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
     return create_graphs(pd.DataFrame(filtered_data))
+
+   
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    deleteFolder = './uploads'
+    if os.path.exists(deleteFolder):
+        try:
+            # Use shutil.rmtree to delete the folder and its contents recursively
+            shutil.rmtree(deleteFolder)
+            print('Folder deleted successfully')
+        except OSError as e:
+            # Handle any errors that occur during folder deletion
+            print(f'Error: {e}')
+    else:
+        print('Folder does not exist')
+    
     if 'fileOne' not in request.files or 'fileTwo' not in request.files:
         return 'No file uploaded', 400
 
@@ -475,7 +510,6 @@ def upload_file():
 
 @app.route('/analyze', methods=['GET'])
 def analyze():
-    print("beginning")
     return button_click()  # Call your function when this endpoint is hit
 
 if __name__ == '__main__':
