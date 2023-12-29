@@ -6,17 +6,11 @@ import datetime
 import shutil
 import json
 import pandas as pd
-import plotly.express as px
 import matplotlib
 matplotlib.use("TkAgg")
 import string
 import re
 from collections import defaultdict, Counter
-from nltk.corpus import stopwords
-import seaborn as sns
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
 import json
 
 app = Flask(__name__)
@@ -146,8 +140,8 @@ def create_graphs(messages):
     emojis_used = Counter()
     for i in range(total_messages):
         row = messages.iloc[i]
+        text = row['text']
         if(row['is_from_me'] == 1):
-            text = row['text']
             emojis = re.findall(emoji_pattern, text)
             emojis_used.update(emojis)
             try:
