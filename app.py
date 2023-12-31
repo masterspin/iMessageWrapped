@@ -1,5 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  
+
 import os
 import sqlite3
 import datetime
@@ -12,9 +16,6 @@ import string
 import re
 from collections import defaultdict, Counter
 import json
-
-app = Flask(__name__)
-CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -495,7 +496,7 @@ def button_click():
    
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST', 'OPTIONS'])
 def upload_file():
     deleteFolder = './uploads'
     if os.path.exists(deleteFolder):
@@ -527,7 +528,7 @@ def upload_file():
 
     return 'Files uploaded successfully'
 
-@app.route('/analyze', methods=['GET'])
+@app.route('/analyze', methods=['GET', 'OPTIONS'])
 def analyze():
     print("beginning")
     return button_click()  # Call your function when this endpoint is hit

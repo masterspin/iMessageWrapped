@@ -35,8 +35,9 @@ const Landing: React.FC = (LandingProps) => {
       formData.append('fileTwo', fileTwo);
   
       try {
-        const response = await fetch('https://imessagewrapped-flask.onrender.com/upload', {
+        const response = await fetch('https://i-message-wrapped-iy127bmv4-masterspin.vercel.app/upload', {
           method: 'POST',
+          mode: 'no-cors',
           body: formData,
         });
         router.prefetch('/loading')

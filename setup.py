@@ -4,9 +4,10 @@ APP = ['gui.py']
 OPTIONS = {
     'argv_emulation': False,
     'packages': ['certifi'],
+    'iconfile': './icon.icns',
     'plist': {
         'CFBundleIdentifier': 'com.ritij.imessagewrapped',  # Replace with your app's bundle ID
-        'CFBundleName': 'iMessageWrapped',  # Replace with your app's name
+        'CFBundleName': 'iMessage Wrapped',  # Replace with your app's name
         'CFBundleShortVersionString': '1.0',  # Replace with your app's version
         'CSResourcesFileMapped': True,
         'NSAppleEventsUsageDescription': 'Explanation of AppleEvents usage',
