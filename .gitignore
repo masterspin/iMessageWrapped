@@ -1,5 +1,7 @@
 *.db
 *.csv
+*.dmg
+iMessageWrapped.dmg
 env/*
 *.abcddb
 Pipfile
@@ -7,4 +9,3 @@ Pipfile.lock
 env/
 .vercel
 .vercelignore
-.dmg
