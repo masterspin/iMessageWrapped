@@ -318,6 +318,7 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
     messages = []
 
     loop_count = 0
+    print(loop_count)
 
     for result in results:
         rowid, date, text, attributed_body, handle_id, is_from_me, cache_roomname = result
@@ -448,12 +449,16 @@ def button_click():
         addressBookData = get_address_book(address_book_location)
     except Exception as e:
         return jsonify({'error': f'Error fetching address book: {str(e)}'}), 500
+
+    print("here 1")
     
     
     try:
         recent_messages = read_messages(db_location, addressBookData)
     except Exception as e:
         return jsonify({'error': f'Error fetching messages: {str(e)}'}), 500
+    
+    print("here 2")
 
     
     try:
@@ -461,11 +466,15 @@ def button_click():
     except Exception as e:
         return jsonify({'error': f'Error combining data: {str(e)}'}), 500
     
+    print("here 3")
+    
     
     try:
         filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
     except Exception as e:
         return jsonify({'error': f'Error filtering data: {str(e)}'}), 500
+    
+    print("here 4")
 
 
     return create_graphs(pd.DataFrame(filtered_data))

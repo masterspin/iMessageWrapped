@@ -35,11 +35,11 @@ const Landing: React.FC = (LandingProps) => {
       formData.append('fileTwo', fileTwo);
   
       try {
-        const response = await fetch('http://127.0.0.1:8000/upload', {
+        const response = await fetch('https://imessagewrapped-flask.onrender.com/upload', {
           method: 'POST',
           body: formData,
         });
-        router.prefetch('/loading')
+
         if (response.ok) {
           console.log('Files uploaded successfully');
           // Navigate to the new page after successful upload
