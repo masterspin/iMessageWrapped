@@ -1,13 +1,18 @@
 from setuptools import setup
 
 APP = ['gui.py']
-DATA_FILES = ['chat.db', 'AddressBook-v22.abcddb']
-DATA_FILES = []
-OPTIONS = {'argv_emulation': False}
+OPTIONS = {
+    'argv_emulation': False,
+    'plist': {
+        'CFBundleShortVersionString': '1.0',
+        'LSUIElement': True,
+        'com.apple.security.filesystem.full-disk-access': True,
+        # Add any other entitlements you need
+    }
+}
 
 setup(
     app=APP,
-    data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
