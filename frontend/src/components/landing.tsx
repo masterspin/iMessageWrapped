@@ -37,7 +37,6 @@ const Landing: React.FC = (LandingProps) => {
       try {
         const response = await fetch('https://i-message-wrapped-iy127bmv4-masterspin.vercel.app/upload', {
           method: 'POST',
-          mode: 'no-cors',
           body: formData,
         });
         router.prefetch('/loading')
