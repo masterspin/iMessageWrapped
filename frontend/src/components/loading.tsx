@@ -29,7 +29,7 @@ const Loading: React.FC = () => {
 
     const analyze = async () => {
       try {
-        const response = await fetch('https://imessagewrapped-flask.onrender.com/analyze');
+        const response = await fetch('http://0.0.0.0:8000/analyze');
         if (response.status >= 200 && response.status < 300) {
           console.log('API call successful');
           clearInterval(interval);

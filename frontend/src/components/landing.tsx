@@ -35,7 +35,7 @@ const Landing: React.FC = (LandingProps) => {
       formData.append('fileTwo', fileTwo);
   
       try {
-        const response = await fetch('https://imessagewrapped-flask.onrender.com/upload', {
+        const response = await fetch('http://0.0.0.0:8000/upload', {
           method: 'POST',
           body: formData,
         });

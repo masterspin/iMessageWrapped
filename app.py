@@ -229,6 +229,18 @@ def create_graphs(messages):
     if(len(sorted_game_pigeon_freq) > 0):
         response["gamePigeonData"] = sorted_game_pigeon_freq
     
+    # deleteFolder = './uploads'
+    # if os.path.exists(deleteFolder):
+    #     try:
+    #         # Use shutil.rmtree to delete the folder and its contents recursively
+    #         shutil.rmtree(deleteFolder)
+    #         print('Folder deleted successfully')
+    #     except OSError as e:
+    #         # Handle any errors that occur during folder deletion
+    #         print(f'Error: {e}')
+    # else:
+    #     print('Folder does not exist')
+    
     return json.dumps(response)
     
 
@@ -310,7 +322,7 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f"  WHERE message.date >= 694224000000000000 ORDER BY message.date DESC"
+    query += f"  WHERE message.date >= 694224000000000000 ORDER BY message.date DESC LIMIT 10000"
     results = cursor.execute(query).fetchall()
 
     this_year = 0
@@ -361,6 +373,7 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
         this_year+=1
 
         loop_count +=1
+        print(loop_count)
 
         mapping = get_chat_mapping(db_location, addressBookData)  # Get chat mapping from database location
 
