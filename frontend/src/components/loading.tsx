@@ -29,7 +29,7 @@ const Loading: React.FC = () => {
 
     const analyze = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/analyze');
+        const response = await fetch('http://127.0.0.1:8000/analyze');
         if (response.status >= 200 && response.status < 300) {
           console.log('API call successful');
           clearInterval(interval);

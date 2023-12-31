@@ -159,7 +159,7 @@ def create_graphs(messages):
         
     #remove stop words
     most_common_emojis = emojis_used.most_common(5)
-    print("Most Common Emojis:")
+
     for emoji, count in most_common_emojis:
         print(f"{emoji}: {count}")       
 
@@ -168,7 +168,7 @@ def create_graphs(messages):
             words_used.pop(char)      
 
 
-    print(words_used.most_common(10))
+
 
 
     # Prints
@@ -449,21 +449,24 @@ def button_click():
     except Exception as e:
         return jsonify({'error': f'Error fetching address book: {str(e)}'}), 500
     
+    
     try:
         recent_messages = read_messages(db_location, addressBookData)
     except Exception as e:
         return jsonify({'error': f'Error fetching messages: {str(e)}'}), 500
+
     
     try:
          combined_data = combine_data(recent_messages, addressBookData)
     except Exception as e:
         return jsonify({'error': f'Error combining data: {str(e)}'}), 500
     
+    
     try:
         filtered_data = [message for message in combined_data if message['date'][:4] == '2023']
     except Exception as e:
         return jsonify({'error': f'Error filtering data: {str(e)}'}), 500
-    print("here")
+
 
     return create_graphs(pd.DataFrame(filtered_data))
 
@@ -504,6 +507,7 @@ def upload_file():
 
 @app.route('/analyze', methods=['GET'])
 def analyze():
+    print("beginning")
     return button_click()  # Call your function when this endpoint is hit
 
 if __name__ == '__main__':
