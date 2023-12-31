@@ -1,10 +1,10 @@
-# iMessage Wrapped
+# iMessage Wrapped Setup Guide
 
-Welcome to iMessage Wrapped! This document provides instructions on how to set up and run the application.
+Welcome to **iMessage Wrapped**! This guide provides instructions on how to set up and run the application.
 
 ## Installation
 
-1. Download the application installer (DMG file) from [here](https://drive.google.com/file/d/12aHgOU0wGu-H7ZYg2ftXnm4qQljfUC2v/view?usp=sharing).
+1. [Download the application installer (DMG file)](https://drive.google.com/file/d/12aHgOU0wGu-H7ZYg2ftXnm4qQljfUC2v/view?usp=sharing){:target="_blank"}.
 2. Open the downloaded DMG file and drag the app to the Applications folder.
 3. Grant the app **Full Disk Access**:
    - Go to **System Preferences** > **Security & Privacy** > **Privacy**.
@@ -17,8 +17,8 @@ Welcome to iMessage Wrapped! This document provides instructions on how to set u
 To run the application, follow these steps:
 
 1. Open the **Applications** folder.
-2. Double-click on [iMessage Wrapped] to launch it.
+2. Double-click on **iMessage Wrapped** to launch it.
 
 ## Acknowledgements
 
-[Created by Ritij Jutur]
+Created by *Ritij Jutur*
