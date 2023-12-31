@@ -29,5 +29,6 @@ tenacity==8.2.3
 tornado==6.4
 tqdm==4.66.1
 tzdata==2023.3
+uvicorn==0.25.0
 # Werkzeug==3.0.1
 # xyzservices==2023.10.1
