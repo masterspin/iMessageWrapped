@@ -24,8 +24,8 @@ pytz==2023.3.post1
 regex==2023.10.3
 seaborn==0.13.0
 tenacity==8.2.3
-tkinterhtml==0.7
-tkinterweb==3.23.5
+# tkinterhtml==0.7
+# tkinterweb==3.23.5
 tornado==6.4
 tqdm==4.66.1
 tzdata==2023.3
