@@ -12,7 +12,7 @@ Welcome to **iMessage Wrapped**! This guide provides instructions on how to set 
 2. Open the downloaded DMG file and drag the app to the Applications folder.
 3. Grant the app **Full Disk Access**:
    - Go to **System Preferences** > **Security & Privacy** > **Privacy**.
-   - Select **Full Disk Access** from the list on the left.
+   - Select **Full Disk Access** from the list.
    - Click the lock icon to make changes.
    - Click the **+** button, navigate to the application, and add it to the list.
    - ![Disk Access Image](diskaccess.png)
