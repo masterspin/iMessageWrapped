@@ -323,7 +323,7 @@ def read_messages(db_location, addressBookData, self_number='Me', human_readable
     LEFT JOIN handle ON message.handle_id = handle.ROWID
     """
     
-    query += f"  WHERE message.date >= 694224000000000000 ORDER BY message.date DESC LIMIT 10000"
+    query += f"  WHERE message.date >= 694224000000000000 ORDER BY message.date DESC LIMIT 1000"
     results = cursor.execute(query).fetchall()
 
     this_year = 0
@@ -534,4 +534,4 @@ def analyze():
     return button_click()  # Call your function when this endpoint is hit
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
