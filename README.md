@@ -16,12 +16,14 @@ Welcome to **iMessage Wrapped**! This guide provides instructions on how to set 
    - Click the lock icon to make changes.
    - Click the **+** button, navigate to the application, and add it to the list.
    - ![Disk Access Image](diskaccess.png)
-4. Secruity Access
-   - Due to MacOS constraints, you may also need to provide security access
-   - If an image like this pops up:
-     ![PopUp Image](PopUp.png)
-   - You may need to right click and "Open" or Allow Security Access via System Settings as show:
-     ![Security Image](Security.png)
+4. If you encounter a security access prompt while trying to open the application, follow these steps:
+   - If you see a prompt like the following:
+   - ![PopUp Image](PopUp.png)
+   - Right-click on the application icon. Select "Open" from the context menu.
+   - If the application still doesn’t open, you might need to grant access via System Settings:
+   - Go to System Preferences on your Mac. Select "Security & Privacy".
+   - ![Security Image](Security.png)
+
 
 ## Usage
 
