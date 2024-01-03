@@ -1,5 +1,7 @@
 # iMessage Wrapped Setup Guide
 
+**As of right now, this application only works with MacOS devices with Silicon Chips (M1, M2, M3). It doesn't work with Intel Chips.**
+
 Welcome to **iMessage Wrapped**! This guide provides instructions on how to set up and run the application.
 
 ## Description
