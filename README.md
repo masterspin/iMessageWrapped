@@ -19,9 +19,9 @@ Welcome to **iMessage Wrapped**! This guide provides instructions on how to set 
 4. If you encounter a security access prompt while trying to open the application, follow these steps:
    - If you see a prompt like the following:
    - ![PopUp Image](PopUp.png)
-   - Right-click on the application icon. Select "Open" from the context menu.
+   - **Right-click** on the application icon. Select **"Open"** from the context menu.
    - If the application still doesn’t open, you might need to grant access via System Settings:
-   - Go to System Preferences on your Mac. Select "Security & Privacy".
+   - Go to **System Preferences** on your Mac. Select **"Security & Privacy"**.
    - ![Security Image](Security.png)
 
 
