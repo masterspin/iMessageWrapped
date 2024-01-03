@@ -8,7 +8,7 @@ Welcome to **iMessage Wrapped**! This guide provides instructions on how to set 
 
 ## Installation
 
-1. [Download the application installer (DMG file)](https://drive.google.com/file/d/1ZhUYdRhbO5d55N-7Wn_hq3x91SBBliaE/view?usp=sharing)
+1. [Download the application installer (DMG file)](https://drive.google.com/file/d/1VaI1dc6_OKJSrgbNHQzqWI8WUKrvVLkN/view?usp=sharing)
 2. Open the downloaded DMG file and drag the app to the Applications folder.
 3. Grant the app **Full Disk Access**:
    - Go to **System Preferences** > **Security & Privacy** > **Privacy**.
