@@ -8,7 +8,7 @@ Welcome to **iMessage Wrapped**! This guide provides instructions on how to set 
 
 *iMessage Wrapped* is a delightful utility application designed to offer insights and analytics about your iMessage usage over the past year. Much like Spotify Wrapped provides a summary of your music listening habits, iMessage Wrapped compiles and presents a comprehensive overview of your most frequent contacts, popular emojis, message frequency, and other intriguing statistics derived from your iMessage conversations throughout the year. Gain fascinating insights into your communication patterns and relive memorable moments as you explore your personalized iMessage journey.
 
-The idea of creating a yearly wrap-up for iMessage usage, much like the beloved Spotify Wrapped, brings a fresh and exciting twist to messaging apps. This creative leap takes a successful format from the music world and cleverly applies it to our daily conversations. By offering personalized insights into communication habits, the app turns everyday data into something fun and engaging.
+The idea of creating a yearly wrap-up for iMessage usage brings a fresh and exciting twist to messaging apps. By offering personalized insights into communication habits, the app turns everyday data into something fun and engaging.
 
 On a social level, iMessage Wrapped helps users relive their favorite moments, reminding them of the connections they've made throughout the year. Highlighting frequent contacts and popular emojis adds a personal touch, making users feel closer to their friends and family. This engaging approach not only sparks curiosity and enjoyment but also encourages users to share their insights with others, fostering a sense of community and connection.
 
