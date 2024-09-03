@@ -27,7 +27,7 @@ tenacity==8.2.3
 # tkinterhtml==0.7
 # tkinterweb==3.23.5
 tornado==6.4
-tqdm==4.66.1
+tqdm==4.66.3
 tzdata==2023.3
 # uvicorn==0.25.0
 # Werkzeug==3.0.1
